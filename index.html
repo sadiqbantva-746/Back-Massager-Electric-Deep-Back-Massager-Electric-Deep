@@ -253,6 +253,8 @@ function prev(){show(i-1)}function next(){show(i+1)}function zoom(){main.style.t
 
 let orderQuantity = 1;
 const PRODUCT_PRICE = 4499;
+// Paste your deployed Google Apps Script Web App URL here.
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwkqDLjizZiorB5Go3GX7a6izzIBoTWaKX4k22p2ilLwk0AwxpMWkwoBcbQcnifPqs3eA/exec';
 
 function openOrder(){
   document.getElementById('orderOverlay').classList.add('show');
@@ -300,17 +302,15 @@ function updateOrderTotal(){
   document.getElementById('grandTotal').textContent=total.toLocaleString();
   document.getElementById('thankTotal').textContent=total.toLocaleString();
 }
-function startOrderProcess(e){
+async function startOrderProcess(e){
   e.preventDefault();
 
-  // Validate all required fields before starting the countdown.
   const form=document.getElementById('orderForm');
   if(!form.checkValidity()){
     form.reportValidity();
     return;
   }
 
-  // Save the customer's submitted details so they can be shown on the Thank You screen.
   const customer={
     name:document.getElementById('fullName').value.trim(),
     phone:document.getElementById('phone').value.trim(),
@@ -321,7 +321,6 @@ function startOrderProcess(e){
     total:PRODUCT_PRICE*orderQuantity
   };
 
-  // Generate a unique-looking order number for this browser session/order.
   const stamp=new Date();
   const datePart=stamp.getFullYear().toString()+String(stamp.getMonth()+1).padStart(2,'0')+String(stamp.getDate()).padStart(2,'0');
   const orderNumber='BM-'+datePart+'-'+Math.floor(1000+Math.random()*9000);
@@ -334,6 +333,31 @@ function startOrderProcess(e){
   document.getElementById('thankCity').textContent=customer.city;
   document.getElementById('thankQty').textContent=customer.qty;
   document.getElementById('thankTotal').textContent=customer.total.toLocaleString();
+
+  // Save order to Google Sheet before showing the processing countdown.
+  if(GOOGLE_SCRIPT_URL && !GOOGLE_SCRIPT_URL.includes('PASTE_YOUR')){
+    const body=new URLSearchParams({
+      orderNumber: orderNumber,
+      name: customer.name,
+      phone: customer.phone,
+      address: customer.address,
+      landmark: customer.landmark,
+      city: customer.city,
+      product: 'Bionic Heated Neck & Back Massager',
+      qty: String(customer.qty),
+      total: String(customer.total)
+    });
+
+    try{
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method:'POST',
+        mode:'no-cors',
+        body:body
+      });
+    }catch(err){
+      console.warn('Google Sheet submission failed:', err);
+    }
+  }
 
   document.getElementById('orderCard').style.display='none';
   document.getElementById('processCard').style.display='block';
