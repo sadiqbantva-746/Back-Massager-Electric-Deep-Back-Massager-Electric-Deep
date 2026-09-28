@@ -168,11 +168,17 @@
     <h2>Thank You!</h2>
     <p>Your order has been received successfully.</p>
     <div class="thank-details">
+      <div><span>Order Number</span><b id="thankOrderNumber">BM-000000</b></div>
       <div><span>Order Status</span><b>Confirmed</b></div>
-      <div><span>Product</span><b>Bionic Neck & Back Massager</b></div>
+      <div><span>Customer Name</span><b id="thankName">—</b></div>
+      <div><span>Phone Number</span><b id="thankPhone">—</b></div>
+      <div><span>Address</span><b id="thankAddress">—</b></div>
+      <div><span>Landmark</span><b id="thankLandmark">—</b></div>
+      <div><span>City</span><b id="thankCity">—</b></div>
+      <div><span>Product</span><b>Bionic Neck & Back Massager × <span id="thankQty">1</span></b></div>
       <div><span>Total</span><b>Rs. <span id="thankTotal">4,499</span></b></div>
     </div>
-    <button class="continue-btn" type="button" onclick="closeOrder()">CONTINUE SHOPPING</button>
+    <button class="continue-btn" type="button" onclick="continueShopping()">CONTINUE SHOPPING</button>
   </div>
 </div>
 
@@ -259,6 +265,30 @@ function openOrder(){
 function closeOrder(){
   document.getElementById('orderOverlay').classList.remove('show');
 }
+function resetOrderForm(){
+  const form=document.getElementById('orderForm');
+  form.reset();
+  orderQuantity=1;
+  document.getElementById('orderQty').textContent='1';
+  document.getElementById('summaryQty').textContent='1';
+  document.getElementById('itemTotal').textContent=PRODUCT_PRICE.toLocaleString();
+  document.getElementById('grandTotal').textContent=PRODUCT_PRICE.toLocaleString();
+  document.getElementById('thankTotal').textContent=PRODUCT_PRICE.toLocaleString();
+  document.getElementById('thankQty').textContent='1';
+  document.getElementById('thankName').textContent='—';
+  document.getElementById('thankPhone').textContent='—';
+  document.getElementById('thankAddress').textContent='—';
+  document.getElementById('thankLandmark').textContent='—';
+  document.getElementById('thankCity').textContent='—';
+  document.getElementById('thankOrderNumber').textContent='BM-000000';
+}
+function continueShopping(){
+  resetOrderForm();
+  document.getElementById('orderCard').style.display='block';
+  document.getElementById('processCard').style.display='none';
+  document.getElementById('thankCard').style.display='none';
+  document.getElementById('orderOverlay').classList.remove('show');
+}
 function changeQty(amount){
   orderQuantity=Math.max(1, orderQuantity+amount);
   updateOrderTotal();
@@ -280,6 +310,31 @@ function startOrderProcess(e){
     form.reportValidity();
     return;
   }
+
+  // Save the customer's submitted details so they can be shown on the Thank You screen.
+  const customer={
+    name:document.getElementById('fullName').value.trim(),
+    phone:document.getElementById('phone').value.trim(),
+    address:document.getElementById('address').value.trim(),
+    landmark:document.getElementById('landmark').value.trim(),
+    city:document.getElementById('city').value.trim(),
+    qty:orderQuantity,
+    total:PRODUCT_PRICE*orderQuantity
+  };
+
+  // Generate a unique-looking order number for this browser session/order.
+  const stamp=new Date();
+  const datePart=stamp.getFullYear().toString()+String(stamp.getMonth()+1).padStart(2,'0')+String(stamp.getDate()).padStart(2,'0');
+  const orderNumber='BM-'+datePart+'-'+Math.floor(1000+Math.random()*9000);
+
+  document.getElementById('thankOrderNumber').textContent=orderNumber;
+  document.getElementById('thankName').textContent=customer.name;
+  document.getElementById('thankPhone').textContent=customer.phone;
+  document.getElementById('thankAddress').textContent=customer.address;
+  document.getElementById('thankLandmark').textContent=customer.landmark;
+  document.getElementById('thankCity').textContent=customer.city;
+  document.getElementById('thankQty').textContent=customer.qty;
+  document.getElementById('thankTotal').textContent=customer.total.toLocaleString();
 
   document.getElementById('orderCard').style.display='none';
   document.getElementById('processCard').style.display='block';
