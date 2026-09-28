@@ -24,7 +24,9 @@
 .row{display:flex;gap:65px;align-items:center;padding:26px 0;font-size:17px}.new{font-weight:800}
 .qtyrow{display:flex;align-items:center;gap:24px;font-size:17px;margin-bottom:25px}
 .qty{width:115px;height:68px;border:1px solid #aaa;border-radius:12px;padding:10px 18px;font-size:18px}
-.buy{width:100%;padding:20px;border:0;border-radius:38px;background:#1469ee;color:#fff;font-size:23px;font-weight:800;cursor:pointer}
+.buy{width:100%;padding:20px;border:0;border-radius:38px;background:#1469ee;color:#fff;font-size:23px;font-weight:800;cursor:pointer;animation:buyAttention 2.8s ease-in-out infinite;transform-origin:center}
+.buy:hover{animation:none;transform:translateY(-2px);box-shadow:0 8px 22px rgba(20,105,238,.28)}
+@keyframes buyAttention{0%,72%,100%{transform:translateX(0) scale(1)}74%{transform:translateX(-4px) scale(1.01)}76%{transform:translateX(4px) scale(1.01)}78%{transform:translateX(-3px) scale(1.01)}80%{transform:translateX(3px) scale(1.01)}82%{transform:translateX(0) scale(1)}}
 .info{font-size:12px;color:#777;line-height:1.5;margin-top:12px}
 .below{margin-top:55px;border-top:1px solid #ddd;padding-top:45px}h2{text-align:center;font-size:30px;margin:0 0 25px}
 .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}.card{border:1px solid #e5e5e5;border-radius:15px;padding:20px}
