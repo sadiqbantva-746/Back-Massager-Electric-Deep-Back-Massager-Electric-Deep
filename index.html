@@ -1,6 +1,23 @@
 <!doctype html><html><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Bionic Heated Neck & Back Massager</title>
+<title>Bionic Heated Neck & Back Massager</title><!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '4219372444989174');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=4219372444989174&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;color:#111}
 .top{font-size:29px;font-weight:800;color:#666;padding:28px 4% 22px}.top b{color:#e21d2b}
@@ -334,12 +351,8 @@ async function startOrderProcess(e){
   document.getElementById('thankQty').textContent=customer.qty;
   document.getElementById('thankTotal').textContent=customer.total.toLocaleString();
 
-  // Start the processing screen immediately. Do not wait for Google Sheet response.
-  document.getElementById('orderCard').style.display='none';
-  document.getElementById('processCard').style.display='block';
-  document.getElementById('thankCard').style.display='none';
-
-  // Send the order in the background so the 3, 2, 1 countdown starts instantly.
+  // Send order to Google Sheet in the background.
+  // Do NOT wait for the Sheet response — countdown must start immediately.
   if(GOOGLE_SCRIPT_URL && !GOOGLE_SCRIPT_URL.includes('PASTE_YOUR')){
     const body=new URLSearchParams({
       orderNumber: orderNumber,
@@ -357,8 +370,12 @@ async function startOrderProcess(e){
       method:'POST',
       mode:'no-cors',
       body:body
-    }).catch(err=>console.warn('Google Sheet submission failed:', err));
+    }).catch(err => console.warn('Google Sheet submission failed:', err));
   }
+
+  document.getElementById('orderCard').style.display='none';
+  document.getElementById('processCard').style.display='block';
+  document.getElementById('thankCard').style.display='none';
 
   let n=3;
   const counter=document.getElementById('countdown');
@@ -372,6 +389,20 @@ async function startOrderProcess(e){
       clearInterval(timer);
       document.getElementById('processCard').style.display='none';
       document.getElementById('thankCard').style.display='block';
+
+      // Meta Pixel Purchase fires only after the Thank You page is shown.
+      if(typeof fbq === 'function'){
+        fbq('track', 'Purchase', {
+          value: customer.total,
+          currency: 'PKR',
+          content_name: 'Bionic Heated Neck & Back Massager',
+          content_type: 'product',
+          content_ids: [orderNumber],
+          num_items: customer.qty
+        }, {
+          eventID: orderNumber
+        });
+      }
     }
   },1000);
 }
