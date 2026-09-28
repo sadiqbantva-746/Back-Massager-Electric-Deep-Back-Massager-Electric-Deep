@@ -35,7 +35,7 @@
 .specs{display:grid;grid-template-columns:1fr 1fr;border:1px solid #ddd;border-radius:15px;overflow:hidden}
 .specs div{padding:14px 18px;border-bottom:1px solid #eee;font-size:14px}.specs div:nth-child(odd){font-weight:800;background:#fafafa}
 @media(max-width:1100px){.grid{grid-template-columns:95px 1fr}.details{grid-column:1/-1;padding:25px 0 0}.viewer{height:650px}}
-@media(max-width:700px){.top{font-size:19px;padding:17px 4%}.wrap{padding:0 10px 35px}.grid{grid-template-columns:58px 1fr;gap:7px}
+@media(max-width:700px){.top{font-size:19px;padding:17px 4%}.wrap{padding:0 10px 35px}.grid{display:flex;flex-direction:column;gap:12px}.thumbs{order:2;display:flex;flex-direction:row;gap:8px;width:100%;max-height:none;overflow-x:auto;overflow-y:hidden;padding:2px 1px 5px;scrollbar-width:none}.thumbs::-webkit-scrollbar{display:none}.thumbs img{width:72px;min-width:72px;height:72px;border-radius:10px}.viewer{order:1;width:100%;height:auto;aspect-ratio:1/1;border-radius:17px}.viewer>img{width:100%;height:100%;object-fit:contain}.details{order:3}
 .thumbs img{height:73px;border-radius:10px}.viewer{height:440px;border-radius:17px}.arrow{width:48px;height:48px;font-size:30px}
 .left{left:9px}.right{right:9px}.badge{top:11px;left:10px;font-size:10px;padding:6px 10px}
 .controls{top:9px;right:9px}.ctrl{height:47px;min-width:47px;font-size:18px}.like{min-width:75px;font-size:13px}
@@ -105,6 +105,16 @@
 }
 </style>
 
+
+<style>
+@media(max-width:700px){
+  .viewer{min-height:0;max-height:none;background:#f7f7f5}
+  .viewer>img{display:block;object-position:center center}
+  .arrow{top:50%;transform:translateY(-50%)}
+  .controls{display:flex}
+  .details{padding-left:0!important}
+}
+</style>
 <!-- ORDER MODAL -->
 <div class="order-overlay" id="orderOverlay">
   <div class="order-card" id="orderCard">
