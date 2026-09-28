@@ -334,7 +334,12 @@ async function startOrderProcess(e){
   document.getElementById('thankQty').textContent=customer.qty;
   document.getElementById('thankTotal').textContent=customer.total.toLocaleString();
 
-  // Save order to Google Sheet before showing the processing countdown.
+  // Start the processing screen immediately. Do not wait for Google Sheet response.
+  document.getElementById('orderCard').style.display='none';
+  document.getElementById('processCard').style.display='block';
+  document.getElementById('thankCard').style.display='none';
+
+  // Send the order in the background so the 3, 2, 1 countdown starts instantly.
   if(GOOGLE_SCRIPT_URL && !GOOGLE_SCRIPT_URL.includes('PASTE_YOUR')){
     const body=new URLSearchParams({
       orderNumber: orderNumber,
@@ -348,20 +353,12 @@ async function startOrderProcess(e){
       total: String(customer.total)
     });
 
-    try{
-      await fetch(GOOGLE_SCRIPT_URL, {
-        method:'POST',
-        mode:'no-cors',
-        body:body
-      });
-    }catch(err){
-      console.warn('Google Sheet submission failed:', err);
-    }
+    fetch(GOOGLE_SCRIPT_URL, {
+      method:'POST',
+      mode:'no-cors',
+      body:body
+    }).catch(err=>console.warn('Google Sheet submission failed:', err));
   }
-
-  document.getElementById('orderCard').style.display='none';
-  document.getElementById('processCard').style.display='block';
-  document.getElementById('thankCard').style.display='none';
 
   let n=3;
   const counter=document.getElementById('countdown');
